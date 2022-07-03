@@ -8,10 +8,12 @@ import Button from '../components/Button'
 import { addDoc, collection } from 'firebase/firestore'
 import { db } from '../../App'
 import { showMessage } from 'react-native-flash-message'
+import moment from 'moment';
+
 
 const noteColorOptions = ["red", "blue", "green", "black"]
 export default function Create({ navigation, user }) {
-  console.log(user)
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [noteColor, setNoteColor] = useState('red');
@@ -25,8 +27,9 @@ export default function Create({ navigation, user }) {
         description: description,
         color: noteColor,
         uid: user.uid,
-        date: String(new Date()),
-        time: String(new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }))
+        time: String(moment().utcOffset('+06:00').format(' hh:mm a')),
+        date: String(new Date())
+
       })
       setLoading(false)
       navigation.goBack()
