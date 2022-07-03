@@ -3,8 +3,7 @@ import { typography } from "../theme/typography";
 
 const BASE = {
     fontFamily: typography.primary,
-    fontSize: 26,
-    color: colors.black
+    fontSize: 26
 }
 
 const BASE_BOLD = {

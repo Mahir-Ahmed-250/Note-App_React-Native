@@ -1,4 +1,4 @@
-import { View, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, Pressable } from "react-native";
+import { View, SafeAreaView, StyleSheet, Image, TextInput, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import React, { useState } from "react";
 import Text from "../text/text";
 import Button from "../components/Button";
@@ -6,9 +6,18 @@ import GlobalStyles from "../../GlobalStyles";
 import Input from "../components/Input";
 import { Feather } from '@expo/vector-icons';
 import { colors } from "../theme/colors";
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../../App'
-
+import { createUserWithEmailAndPassword, sendSignInLinkToEmail } from 'firebase/auth'
+import { auth, db } from '../../App'
+import {
+  addDoc,
+  collection,
+  getDocs,
+  doc,
+  onSnapShot,
+  query,
+  where
+} from 'firebase/firestore'
+import { showMessage } from 'react-native-flash-message'
 
 const genderOptions = ['Male', 'Female']
 
@@ -21,16 +30,33 @@ export default function SignUp({ navigation }) {
   const [password, setPassword] = useState('');
   const [age, setAge] = useState('');
   const [name, setName] = useState('')
-
+  const [loading, setLoading] = useState(false)
 
 
   const signup = async () => {
-
+    setLoading(true)
     try {
+      // Created User With Email & Password
       const result = await createUserWithEmailAndPassword(auth, email, password)
 
-    } catch (error) {
+      // Add User Profile to Database
+      await addDoc(collection(db, 'users'), {
+        name: name,
+        email: email,
+        age: age,
+        gender: gender,
+        uid: result.user.uid
+      })
+      setLoading(false)
+    }
+
+    catch (error) {
       console.log('error----->', error)
+      showMessage({
+        message: error.message,
+        type: "danger"
+      })
+      setLoading(false)
     }
 
   }
@@ -40,7 +66,7 @@ export default function SignUp({ navigation }) {
       <SafeAreaView style={GlobalStyles.droidSafeArea} >
 
         <View style={{ paddingHorizontal: 16, paddingVertical: 25 }}>
-          <Input placeholder={"Email Address"} onChangeText={(text) => setEmail(text)} />
+          <Input placeholder={"Email Address"} onChangeText={(text) => setEmail(text)} autoCapitalize={"none"} />
 
 
           <View style={styles.passwordContainer}>
@@ -53,8 +79,11 @@ export default function SignUp({ navigation }) {
           </View>
 
           <Input placeholder={"Full Name"} onChangeText=
-            {(text) => setName(text)} />
-          <Input placeholder={"Age"} onChangeText=
+            {(text) => setName(text)}
+            autoCapitalize={"words"}
+
+          />
+          <Input placeholder={"Age"} keyboardType="numeric" onChangeText=
             {(text) => setAge(text)} />
           <View style={{ marginVertical: 20 }}>
             <Text preset="h5">
@@ -78,8 +107,14 @@ export default function SignUp({ navigation }) {
 
             )
           }
+          {
+            loading ? (
+              <ActivityIndicator />
+            ) : (
+              <Button title={"Sign Up"} customStyles={{ alignSelf: "center", marginTop: 25 }} onPress={signup} />
+            )
+          }
 
-          <Button title={"Sign Up"} customStyles={{ alignSelf: "center", marginBottom: 40, marginTop: 30 }} onPress={signup} />
 
         </View>
 

@@ -1,4 +1,4 @@
-import { View, SafeAreaView, StyleSheet, Image, TextInput, Pressable, ScrollView } from "react-native";
+import { View, SafeAreaView, StyleSheet, Image, TextInput, Pressable, ScrollView, ActivityIndicator } from "react-native";
 import React, { useState } from "react";
 import Text from "../text/text";
 import { colors } from "../theme/colors";
@@ -6,11 +6,36 @@ import Button from "../components/Button";
 import GlobalStyles from "../../GlobalStyles";
 import Input from "../components/Input";
 import { Feather } from '@expo/vector-icons';
-
-
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../../App'
+import { showMessage } from "react-native-flash-message";
 
 export default function SignIn({ navigation }) {
   const [hidePass, setHidePass] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false)
+
+
+  const signIn = async () => {
+    setLoading(true)
+    try {
+      await signInWithEmailAndPassword(auth, email, password).then((res) => {
+        console.log('Sign In Successfully', res)
+      })
+      setLoading(false)
+    }
+    catch (error) {
+      console.log('error----->', error)
+      showMessage({
+        message: error.message,
+        type: "danger"
+      })
+      setLoading(false)
+    }
+  }
+
+
   return (
     <ScrollView>
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -24,9 +49,14 @@ export default function SignIn({ navigation }) {
         </Text>
 
         <View style={{ paddingHorizontal: 16, paddingVertical: 25 }}>
-          <Input placeholder={"Email address"} />
+          <Input
+            placeholder={"Email address"}
+            onChangeText={(text) => setEmail(text)} autoCapitalize={"none"} />
+
           <View style={styles.passwordContainer}>
-            <TextInput style={styles.inputStyle} placeholder={"Password"} secureTextEntry={hidePass ? true : false}
+            <TextInput style={styles.inputStyle} placeholder={"Password"}
+              secureTextEntry={hidePass ? true : false}
+              onChangeText={(text) => setPassword(text)}
             />
             <Feather size={20} color="grey" style={{ marginTop: 15 }}
               name={hidePass ? 'eye-off' : 'eye'}
@@ -35,7 +65,15 @@ export default function SignIn({ navigation }) {
 
         </View>
 
-        <Button onPress={() => { console.log('hello') }} title={"Login"} customStyles={{ alignSelf: "center", marginBottom: 60 }} />
+        {
+          loading ? (
+            <ActivityIndicator />
+          ) : (
+            <Button onPress={signIn} title={"Login"} customStyles={{ alignSelf: "center", marginBottom: 60 }} />
+          )
+        }
+
+
 
 
         <View style={{ flex: 1, justifyContent: "flex-end", paddingBottom: 10, alignItems: "center" }}>

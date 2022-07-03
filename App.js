@@ -1,17 +1,20 @@
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View, Image } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Create from "./src/screens/Create";
-import Edit from "./src/screens/Edit";
+import Update from "./src/screens/Update";
 import SignUp from "./src/screens/SignUp";
 import SignIn from "./src/screens/SignIn";
 import Home from "./src/screens/Home";
 // Import the functions you need from the SDKs you need
 
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getFirestore } from 'firebase/firestore'
+import FlashMessage from "react-native-flash-message";
+import { useEffect, useState } from "react";
+
 
 
 // Your web app's Firebase configuration
@@ -40,6 +43,17 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app)
+export const db = getFirestore(app)
+
+
+
+
+
+
+
+
+
+
 
 const AppTheme = {
   ...DefaultTheme,
@@ -52,7 +66,29 @@ const AppTheme = {
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const user = false;
+  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null)
+
+  // useEffect(() => {
+  //   signOut(auth)
+  // })
+
+  useEffect(() => {
+    const authSubscription = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user)
+        setLoading(false)
+      }
+      else {
+        setUser(null)
+        setLoading(false)
+      }
+    })
+
+    return authSubscription;
+  }, [])
+
+
   const [loaded] = useFonts({
     "LeagueGothic-Regular": require('./assets/fonts/LeagueGothic-Regular.ttf'),
     "Assistant-Medium": require('./assets/fonts/Assistant-Medium.ttf'),
@@ -63,14 +99,30 @@ export default function App() {
       <Text>Font is Loading.........</Text>
     )
   }
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Image source={require('./6os.gif')} style={{
+          alignSelf: "center", resizeMode: "contain", width:
+            300
+        }} />
+      </View>
+    )
+  }
   return (
     <NavigationContainer theme={AppTheme}>
       <Stack.Navigator>
         {user ? (
           <>
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Edit" component={Edit} />
-            <Stack.Screen name="Create" component={Create} />
+            <Stack.Screen name="Home" options={{ headerShown: false }} >
+              {(props) => <Home {...props} user={user} />}
+            </Stack.Screen>
+            <Stack.Screen name="Create"  >
+              {(props) => <Create {...props} user={user} />}
+            </Stack.Screen>
+
+            <Stack.Screen name="Update" component={Update} />
+
           </>
         ) : (
           <>
@@ -83,6 +135,7 @@ export default function App() {
           </>
         )}
       </Stack.Navigator>
+      <FlashMessage position="bottom" />
     </NavigationContainer>
   );
 }

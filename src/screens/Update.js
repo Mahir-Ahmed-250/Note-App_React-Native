@@ -5,36 +5,36 @@ import GlobalStyles from '../../GlobalStyles'
 import Input from '../components/Input'
 import RadioInput from '../components/RadioInput'
 import Button from '../components/Button'
-import { addDoc, collection } from 'firebase/firestore'
+import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '../../App'
 import { showMessage } from 'react-native-flash-message'
 
+
 const noteColorOptions = ["red", "blue", "green", "black"]
-export default function Create({ navigation, user }) {
-  console.log(user)
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [noteColor, setNoteColor] = useState('red');
+export default function Create({ navigation, user, route }) {
+  const noteItem = route.params.item;
+  const [title, setTitle] = useState(noteItem.title);
+  const [description, setDescription] = useState(noteItem.description);
+  const [noteColor, setNoteColor] = useState(noteItem.color);
   const [loading, setLoading] = useState(false);
 
-  const onPressCreate = async () => {
+  const onPressUpdate = async () => {
+    const noteRef = doc(db, "notes", noteItem.id)
     setLoading(true)
     try {
-      await addDoc(collection(db, 'notes'), {
+      await updateDoc(noteRef, {
         title: title,
         description: description,
         color: noteColor,
-        uid: user.uid,
         date: String(new Date()),
         time: String(new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }))
       })
       setLoading(false)
       navigation.goBack()
       showMessage({
-        message: "Note Created Successfully",
+        message: "Note Updated Successfully",
         type: "success"
       })
-
     }
     catch (err) {
       console.log('err--->', err)
@@ -48,12 +48,15 @@ export default function Create({ navigation, user }) {
         placeholder={"Title"}
         onChangeText=
         {(text) => setTitle(text)}
+        value={title}
       />
       <Input
         placeholder={"Description"}
         onChangeText=
         {(text) => setDescription(text)}
-        multiline />
+        multiline
+        value={description}
+      />
       <View style={{ marginTop: 25, marginBottom: 15 }}>
         <Text>
           Select your note color
@@ -69,7 +72,7 @@ export default function Create({ navigation, user }) {
       ))}
 
       {loading ? <ActivityIndicator /> :
-        <Button title={"Create"} customStyles={{ alignSelf: "center", marginTop: 60, width: "100%" }} onPress={onPressCreate} />
+        <Button title={"Update"} customStyles={{ alignSelf: "center", marginTop: 60, width: "100%" }} onPress={onPressUpdate} />
       }
 
     </SafeAreaView>
