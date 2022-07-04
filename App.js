@@ -2,11 +2,12 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { ActivityIndicator, StyleSheet, Text, View, Image } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Home from "./src/screens/Home";
 import Create from "./src/screens/Create";
 import Update from "./src/screens/Update";
 import SignUp from "./src/screens/SignUp";
 import SignIn from "./src/screens/SignIn";
-import Home from "./src/screens/Home";
+
 // Import the functions you need from the SDKs you need
 
 import { initializeApp } from "firebase/app";
