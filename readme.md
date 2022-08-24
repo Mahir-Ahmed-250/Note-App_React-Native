@@ -5,8 +5,8 @@
 * Scan the QR code from terminal by your phone through EXPO go apps which you can found on Play Store
 * BOOM!!
 ## Expo
-* exp://exp.host/@mahir_developer/note-app?release-channel=default <br/>
-Download Expo Go From Play Store & Paste this link for visit Mobile App Version
+* https://expo.dev/@mahir_developer/note-app <br/>
+Download Expo Go From Play Store & Paste or scan the qr of this link for visit Mobile App Version
 ### Web
 * https://note-app-react-alpha.vercel.app/
 
