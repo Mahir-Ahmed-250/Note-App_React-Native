@@ -6,7 +6,7 @@ import GlobalStyles from "../../GlobalStyles";
 import Input from "../components/Input";
 import { Feather } from '@expo/vector-icons';
 import { colors } from "../theme/colors";
-import { createUserWithEmailAndPassword, sendSignInLinkToEmail } from 'firebase/auth'
+import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth'
 import { auth, db } from '../../App'
 import {
   addDoc,
@@ -47,6 +47,17 @@ export default function SignUp({ navigation }) {
         gender: gender,
         uid: result.user.uid
       })
+
+      await sendEmailVerification(auth.currentUser)
+        .then(() => {
+          showMessage({
+            message: "Please check your email inbox or spam for verification link!",
+            type: "success",
+            duration: 8000
+          })
+
+        });
+
       setLoading(false)
     }
 

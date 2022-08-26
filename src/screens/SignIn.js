@@ -1,12 +1,12 @@
 import { View, SafeAreaView, StyleSheet, Image, TextInput, Pressable, ScrollView, ActivityIndicator } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Text from "../text/text";
 import { colors } from "../theme/colors";
 import Button from "../components/Button";
 import GlobalStyles from "../../GlobalStyles";
 import Input from "../components/Input";
 import { Feather } from '@expo/vector-icons';
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { auth } from '../../App'
 import { showMessage } from "react-native-flash-message";
 
@@ -19,9 +19,23 @@ export default function SignIn({ navigation }) {
 
   const signIn = async () => {
     setLoading(true)
+    signOut(auth)
     try {
       await signInWithEmailAndPassword(auth, email, password).then((res) => {
-        console.log('Sign In Successfully', res)
+        if (res.user.emailVerified) {
+          showMessage({
+            message: "Successfully logged in!",
+            type: "success",
+            duration: 8000
+          })
+        }
+        else {
+          showMessage({
+            message: "Your Email is not Verified!",
+            type: "danger",
+            duration: 8000
+          })
+        }
       })
       setLoading(false)
     }
@@ -39,7 +53,6 @@ export default function SignIn({ navigation }) {
   return (
     <ScrollView>
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
-
         <Image
           source={require("../../assets/signup.png")}
           style={{ alignSelf: "center" }}
@@ -73,11 +86,7 @@ export default function SignIn({ navigation }) {
           )
         }
 
-
-
-
         <View style={{ flex: 1, justifyContent: "flex-end", paddingBottom: 10, alignItems: "center" }}>
-
 
           <Pressable onPress={() => { navigation.navigate('SignUp') }}>
             <Text preset="h4">

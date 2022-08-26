@@ -1,6 +1,6 @@
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { ActivityIndicator, StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./src/screens/Home";
 import Create from "./src/screens/Create";
@@ -76,7 +76,8 @@ export default function App() {
 
   useEffect(() => {
     const authSubscription = onAuthStateChanged(auth, (user) => {
-      if (user) {
+      console.log(auth)
+      if (user && user.emailVerified) {
         setUser(user)
         setLoading(false)
       }
@@ -88,6 +89,7 @@ export default function App() {
 
     return authSubscription;
   }, [])
+
 
 
   const [loaded] = useFonts({
@@ -110,8 +112,10 @@ export default function App() {
       </View>
     )
   }
+
   return (
     <NavigationContainer theme={AppTheme}>
+
       <Stack.Navigator>
         {user ? (
           <>
@@ -137,6 +141,7 @@ export default function App() {
         )}
       </Stack.Navigator>
       <FlashMessage position="bottom" />
+
     </NavigationContainer>
   );
 }
