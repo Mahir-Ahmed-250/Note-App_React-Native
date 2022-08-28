@@ -125,27 +125,15 @@ export default function SignUp({ navigation }) {
               <Button title={"Sign Up"} customStyles={{ alignSelf: "center", marginTop: 25 }} onPress={signup} />
             )
           }
-
-
         </View>
-
-
-
-
-
         <View style={{ flex: 1, justifyContent: "flex-end", paddingBottom: 10, alignItems: "center" }}>
-
           <Pressable onPress={() => { navigation.navigate("SignIn") }}>
             <Text preset="h4">
               Already have an account? <Text preset="h4" style={{ color: 'green', marginLeft: 10, }}>Sign in</Text>
             </Text>
           </Pressable>
         </View>
-
-
-
       </SafeAreaView >
-
     </ScrollView>
 
   );

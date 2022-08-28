@@ -15,6 +15,7 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { getFirestore } from 'firebase/firestore'
 import FlashMessage from "react-native-flash-message";
 import { useEffect, useState } from "react";
+import Forget from "./src/screens/Forget";
 
 
 
@@ -137,6 +138,8 @@ export default function App() {
               options={{ headerShown: false }}
             />
             <Stack.Screen name="SignUp" component={SignUp} />
+            <Stack.Screen name="Forget" component={Forget} />
+
           </>
         )}
       </Stack.Navigator>

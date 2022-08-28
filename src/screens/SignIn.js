@@ -1,5 +1,5 @@
 import { View, SafeAreaView, StyleSheet, Image, TextInput, Pressable, ScrollView, ActivityIndicator } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Text from "../text/text";
 import { colors } from "../theme/colors";
 import Button from "../components/Button";
@@ -61,7 +61,7 @@ export default function SignIn({ navigation }) {
           Never Forget your Notes
         </Text>
 
-        <View style={{ paddingHorizontal: 16, paddingVertical: 25 }}>
+        <View style={{ paddingHorizontal: 12, paddingVertical: 20 }}>
           <Input
             placeholder={"Email address"}
             onChangeText={(text) => setEmail(text)} autoCapitalize={"none"} />
@@ -75,6 +75,12 @@ export default function SignIn({ navigation }) {
               name={hidePass ? 'eye-off' : 'eye'}
               onPress={() => setHidePass(!hidePass)} />
           </View>
+          <Pressable onPress={() => { navigation.navigate('Forget') }}>
+
+            <Text preset="h4" style={{ color: 'blue', textAlign: "right", marginRight: 15 }} >
+              Forget password?
+            </Text>
+          </Pressable>
 
         </View>
 
@@ -119,6 +125,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     borderBottomWidth: 1,
     borderBottomColor: colors.grey,
-    marginBottom: 30
+    marginBottom: 10
+  },
+  forget: {
+    color: "red"
   }
 });
