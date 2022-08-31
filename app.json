@@ -2,7 +2,7 @@
   "expo": {
     "name": "note-app",
     "slug": "note-app",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,6 +22,7 @@
       "bundleIdentifier": "com.mahir250.noteapp"
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -35,6 +36,7 @@
       "eas": {
         "projectId": "46440ad3-d079-4db2-9ad6-5de2a68415a2"
       }
-    }
+    },
+    "description": ""
   }
 }
